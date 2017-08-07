@@ -517,6 +517,15 @@ local function ExtractEntities(Entity, Entities, Constraints, Ignore)
 	return Entities, Constraints
 end
 
+local function CanConstrain(pl, ent)
+	if (CPPI and ent.CPPICanTool) then
+		return ent:CPPICanTool(pl, "nocollide_world")
+	end
+	
+	local allowed = hook.Run("CanTool", pl, {Entity = ent}, "nocollide_world")
+	return allowed == nil and true or allowed
+end
+
 local SendToClient2 = {}
 local SendDone2 = {}
 
@@ -723,6 +732,8 @@ function TOOL:LeftClick(trace)
 		local UndoTable = {}
 		for k,v in pairs(ents.FindInBox(trace.Entity:LocalToWorld(trace.Entity:OBBMins()-AddVector), trace.Entity:LocalToWorld(trace.Entity:OBBMaxs()+AddVector))) do
 			if v:IsValid() and v != trace.Entity and !v:IsPlayer() then
+				if (not CanConstrain(pl, v)) then continue end
+				
 				local Const = constraint.NoCollideWorld(trace.Entity, v, 0, 0)
 				if IsValid(Const) then UndoTable[#UndoTable+1] = Const end
 			end
@@ -747,6 +758,8 @@ function TOOL:LeftClick(trace)
 		local UndoTable = {}
 		for k,v in pairs(ents.FindInSphere(trace.Entity:LocalToWorld(trace.Entity:OBBCenter()), (trace.Entity:OBBMaxs()/2):Length()+Distance)) do
 			if v:IsValid() and v != trace.Entity and !v:IsPlayer() then
+				if (not CanConstrain(pl, v)) then continue end
+				
 				local Const = constraint.NoCollideWorld(trace.Entity, v, 0, 0)
 				if IsValid(Const) then UndoTable[#UndoTable+1] = Const end
 			end
@@ -774,8 +787,12 @@ function TOOL:LeftClick(trace)
 			local UndoTable = {}
 			for k1, Ent1 in pairs(Entities) do
 				if Ent1:IsValid() and !Ent1:IsPlayer() then
+					if (not CanConstrain(pl, Ent1)) then continue end
+					
 					for k,v in pairs(ents.FindInBox(Ent1:LocalToWorld(Ent1:OBBMins()-AddVector), Ent1:LocalToWorld(Ent1:OBBMaxs()+AddVector))) do
 						if v:IsValid() and v != Ent1 and !v:IsPlayer() then
+							if (not CanConstrain(pl, v)) then continue end
+							
 							local Const = constraint.NoCollideWorld(Ent1, v, 0, 0)
 							if IsValid(Const) then UndoTable[#UndoTable+1] = Const end
 						end
@@ -805,8 +822,12 @@ function TOOL:LeftClick(trace)
 			local UndoTable = {}
 			for k1, Ent1 in pairs(Entities) do
 				if Ent1:IsValid() and !Ent1:IsPlayer() then
+					if (not CanConstrain(pl, Ent1)) then continue end
+				
 					for k,v in pairs(ents.FindInSphere(Ent1:LocalToWorld(Ent1:OBBCenter()), (Ent1:OBBMaxs()/2):Length()+Distance)) do
 						if v:IsValid() and v != Ent1 and !v:IsPlayer() then
+							if (not CanConstrain(pl, v)) then continue end
+							
 							local Const = constraint.NoCollideWorld(Ent1, v, 0, 0)
 							if IsValid(Const) then UndoTable[#UndoTable+1] = Const end
 						end
