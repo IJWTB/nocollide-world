@@ -1,5 +1,5 @@
 TOOL.Category		= "Construction"
-TOOL.Name			= "#No Collide World"
+TOOL.Name		= "#Tool.nocollide_world.name"
 TOOL.Command		= nil
 TOOL.ConfigName		= nil
 
@@ -16,7 +16,7 @@ if SERVER then
 end
 
 if CLIENT then
-	language.Add("Tool.nocollide_world.name", "No collide world")
+	language.Add("Tool.nocollide_world.name", "No-Collide World")
 	language.Add("Tool.nocollide_world.desc", "To let an objects ignore collisions")
 	language.Add("Tool.nocollide_world.0", "Click on 2 objects or world to make them not collide or right click to make an object not collide with anything.")
 	language.Add("Tool.nocollide_world.1", "Now click on something else.")
